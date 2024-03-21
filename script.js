@@ -157,13 +157,13 @@ document.getElementById('editbtn').addEventListener('click', function () {
 })
 
 function deleteStudent(studentId) {
-    if (confirm("Are you sure you want to delete this student?")) {
+    if (confirm("Are you sure you want to delete  this   student?")) {
         fetch(config.host + `/api/Student/delete-student-by-id/${studentId}`)
             .then(response => {
                 if (response.ok) {
                     return response.json();
                 }
-                throw new Error('Failed to delete student');
+                throw new Error('Failed to delete the student');
             })
             .then(data => {
                 alert(data.message);
