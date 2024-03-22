@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function ValidateEmail(email) {
+            // Regular expression pattern for validating email
+            var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        function validateUserName(userName) {
+            // Check if userName is not null and has length greater than or equal to 5
+            return userName !== null &&  userName.length >= 5;
+        }
+    </script>
+</body>
+
+</html>

@@ -40,39 +40,61 @@ function renderTable() {
 document.getElementById('addbtn').addEventListener('click', function () {
     let name = document.getElementById("addnamefield").value;
     let email = document.getElementById("addemailfield").value;
-    const newStudent = {
-        name: name,
-        email: email
-    };
-    fetch(config.host + '/api/Student/add-student', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newStudent)
-    })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            throw new Error('Failed to add student');
+    if (validateUserName(name) == true && ValidateEmail(email) == true) {
+        console.log("both validated");
+        const newStudent = {
+            name: name,
+            email: email
+        };
+        fetch(config.host + '/api/Student/add-student', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newStudent)
         })
-        .then(data => {
-            alert(data.message);
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Failed to add student');
+            })
+            .then(data => {
+                alert(data.message);
+                console.table(data);
 
-            // Clear the input fields
-            document.getElementById('addnamefield').value = '';
-            document.getElementById('addemailfield').value = '';
+                // Clear the input fields
+                document.getElementById('addnamefield').value = '';
+                document.getElementById('addemailfield').value = '';
 
-            // Close the modal
-            $('#addModal').modal('hide');
-            renderTable();
+                document.getElementById('addnamevalidation').innerText = "";
+                document.getElementById('addemailvalidation').innerText = "";
 
-        })
-        .catch(error => {
-            console.error('Error adding student:', error);
-        });
+                // Close the modal
+                $('#addModal').modal('hide');
+                renderTable();
+
+            })
+            .catch(error => {
+                console.error('Error adding student:', error);
+            });
+    }
+    else if (validateUserName(name) == false && ValidateEmail(email) == true) {
+        document.getElementById('addnamevalidation').innerText = "Username not Valid";
+        document.getElementById('addemailvalidation').innerText = "";
+    }
+    else if (validateUserName(name) == true && ValidateEmail(email) == false) {
+        document.getElementById('addnamevalidation').innerText = "";
+        document.getElementById('addemailvalidation').innerText = "Email not Valid";
+    }
+    else {
+        console.log("both not validated");
+        document.getElementById('addnamevalidation').innerText = "Username not Valid";
+        document.getElementById('addemailvalidation').innerText = "Email not Valid";
+    }
 })
+
+
 
 function editStudent(id, name, email) {
     document.getElementById('editidfield').value = id;
@@ -84,35 +106,54 @@ document.getElementById('editbtn').addEventListener('click', function () {
     let id = document.getElementById("editidfield").value;
     let name = document.getElementById("editnamefield").value;
     let email = document.getElementById("editemailfield").value;
-    const newStudent = {
-        id: id,
-        name: name,
-        email: email
-    };
-    fetch(config.host + '/api/Student/update-student', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newStudent)
-    })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            throw new Error('Failed to edit student');
+    if (validateUserName(name) == true && ValidateEmail(email) == true) {
+        const newStudent = {
+            id: id,
+            name: name,
+            email: email
+        };
+        console.log(JSON.stringify(newStudent))
+        fetch(config.host + '/api/Student/update-student', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newStudent)
         })
-        .then(data => {
-            alert(data.message);
+            .then(data => {
+                console.table(data);
+                alert("Student Updated Successfully !");
 
-            // Close the modal
-            $('#editModal').modal('hide');
-            renderTable();
+                // Clear the input fields
+                document.getElementById('editnamefield').value = '';
+                document.getElementById('editemailfield').value = '';
 
-        })
-        .catch(error => {
-            console.error('Error editing student:', error);
-        });
+                document.getElementById('editnamevalidation').innerText = "";
+                document.getElementById('editemailvalidation').innerText = "";
+
+                // Close the modal
+                $('#editModal').modal('show');
+                renderTable();
+
+            })
+            .catch(error => {
+                console.error('Error updating student:', error);
+            });
+    }
+    else if (validateUserName(name) == false && ValidateEmail(email) == true) {
+        document.getElementById('editnamevalidation').innerText = "Username not Valid";
+        document.getElementById('editemailvalidation').innerText = "";
+    }
+    else if (validateUserName(name) == true && ValidateEmail(email) == false) {
+        document.getElementById('editnamevalidation').innerText = "";
+        document.getElementById('editemailvalidation').innerText = "Email not Valid";
+    }
+    else {
+        console.log("both not validated");
+        document.getElementById('editnamevalidation').innerText = "Username not Valid";
+        document.getElementById('editemailvalidation').innerText = "Email not Valid";
+    }
+
 })
 
 function deleteStudent(studentId) {
@@ -134,34 +175,13 @@ function deleteStudent(studentId) {
     }
 }
 
-//function validateData(name, email) {
-//  if(name == "" || email == "")
-//{
-// alert("All fields must be filled out");
-//return false;
-//}
-//return true;
-//}
-
-function validateEmail(email) {
-    // Regular expression for basic email validation
-    var re = /\S+@\S+\.\S+/;
+function ValidateEmail(email) {
+    // Regular expression pattern for validating email
+    var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
 }
 
-function validateForm() {
-    var name = document.getElementById('addnamefield').value;
-    var email = document.getElementById('addemailfield').value;
-
-    if (name.trim() === "" || email.trim() === "") {
-        alert("Name and Email must be filled out");
-        return false;
-    }
-
-    if (!validateEmail(email)) {
-        alert("Please enter a valid email address");
-        return false;
-    }
-
-    return true;
+function validateUserName(userName) {
+    var re = /^[a-zA-Z]{5,}$/;
+    return re.test(userName);
 }
