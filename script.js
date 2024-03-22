@@ -170,7 +170,7 @@ function deleteStudent(studentId) {
                 renderTable();
             })
             .catch(error => {
-                console.error('Error deleting student:', error);
+                console.error('Error deleting the student', error);
             });
     }
 }
